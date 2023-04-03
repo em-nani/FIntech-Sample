@@ -1,0 +1,86 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Jenkins, Nexus, and SonarQube servers with security groups'
+
+Parameters:
+  JenkinsAMI:
+    Description: 'ami-006e00d6ac75d2ebb'
+    Type: String
+  NexusAMI:
+    Description: 'ami-00c39f71452c08778'
+    Type: String
+  SonarQubeAMI:
+    Description: 'ami-0263e4deb427da90e'
+    Type: String
+  KeyName:
+    Description: devops
+    Type: AWS::EC2::KeyPair::KeyName
+
+Resources:
+  JenkinsSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: 'Jenkins security group'
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 8080
+          ToPort: 8080
+          CidrIp: 0.0.0.0/0
+
+  NexusSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: 'Nexus security group'
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 8081
+          ToPort: 8081
+          CidrIp: 0.0.0.0/0
+
+  SonarQubeSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: 'SonarQube security group'
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+
+  JenkinsInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t2.medium
+      ImageId: !Ref JenkinsAMI
+      KeyName: !Ref KeyName
+      SecurityGroupIds:
+        - !GetAtt JenkinsSecurityGroup.GroupId
+
+  NexusInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t2.medium
+      ImageId: !Ref NexusAMI
+      KeyName: !Ref KeyName
+      SecurityGroupIds:
+        - !GetAtt NexusSecurityGroup.GroupId
+
+  SonarQubeInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t2.medium
+      ImageId: !Ref SonarQubeAMI
+      KeyName: !Ref KeyName
+      SecurityGroupIds:
+        - !GetAtt SonarQubeSecurityGroup.GroupId
