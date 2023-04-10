@@ -1,0 +1,15 @@
+# buildspec.yml
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 14
+    commands:
+      - npm install
+  build:
+    commands:
+      - docker build -t express-devops-sample .
+  post_build:
+    commands:
+      - echo "Build completed successfully"
