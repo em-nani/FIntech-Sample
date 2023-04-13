@@ -1,3 +1,7 @@
 # .gitignore
 node_modules/
 *.log
+**/.terraform/*
+*.tfstate.*
+*.tfstate
+*.out
