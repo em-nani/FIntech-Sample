@@ -1,0 +1,59 @@
+# infra/nexus_playbook.yml
+---
+- name: Provision Nexus server
+  hosts: nexus
+  become: yes
+  gather_facts: yes
+
+  tasks:
+    - name: Install Java
+      yum:
+        name: java-1.8.0-openjdk-devel
+        state: present
+
+    - name: Create nexus user
+      user:
+        name: nexus
+        state: present
+        system: yes
+
+    - name: Create Nexus directory
+      file:
+        path: /opt/nexus
+        state: directory
+        owner: nexus
+        group: nexus
+        mode: '0755'
+
+    - name: Download Nexus
+      get_url:
+        url: https://download.sonatype.com/nexus/3/latest-unix.tar.gz
+        dest: /tmp/nexus.tar.gz
+        mode: '0644'
+
+    - name: Extract Nexus
+      unarchive:
+        src: /tmp/nexus.tar.gz
+        dest: /opt/nexus
+        remote_src: yes
+        extra_opts: [--strip-components=1]
+        owner: nexus
+        group: nexus
+
+    - name: Install Nexus service
+      template:
+        src: nexus.service.j2
+        dest: /etc/systemd/system/nexus.service
+        mode: '0644'
+
+    - name: Enable and start Nexus service
+      systemd:
+        name: nexus
+        enabled: yes
+        state: started
+
+  handlers:
+    - name: restart nexus
+      systemd:
+        name: nexus
+        state: restarted
