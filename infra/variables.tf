@@ -27,3 +27,8 @@ variable "instance_type" {
   description = "The instance type for the Nexus instance"
   type        = string
 }
+
+variable "ssh_username" {
+  description = "username for ec2"
+  type = string
+}

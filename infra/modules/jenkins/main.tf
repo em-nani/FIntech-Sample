@@ -4,6 +4,19 @@ resource "aws_instance" "jenkins" {
   key_name      = var.key_name
   subnet_id     = var.subnet_id
 
+  #provisioner "remote-exec" {
+    #connection {
+  #   type     = "ssh"
+  #   user     = "ec2-user"
+  #   private_key = "${file("~/downloads/jenkins_nexus.pem")}"
+  #   host     = "${aws_instance.jenkins.public_ip}"
+  #   }
+
+  #   inline = [
+  #     "sudo ansible-playbook -i ansible_inventory.ini infra/jenkins_playbook.yml",
+  #   ]
+  # }
+
   vpc_security_group_ids = [aws_security_group.jenkins_sg.id]
 
   tags = {

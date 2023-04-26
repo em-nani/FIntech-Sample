@@ -1,7 +1,7 @@
 # infra/jenkins_playbook.yml
 ---
 - name: Provision Jenkins server
-  hosts: jenkins
+  hosts: jenkins_instance
   become: yes
   gather_facts: yes
   vars:
@@ -12,17 +12,25 @@
       yum:
         name: ['java-1.8.0-openjdk-devel']
         state: latest
+    
+    - name: Install required packages
+      ansible.builtin.yum:
+        name:
+          - ca-certificates
+        state: latest
 
-    - name: Enable Jenkins repository
-      shell: "curl --silent --location http://pkg.jenkins.io/redhat-stable/jenkins.io.key | sudo rpm --import -"
+    - name: Import Jenkins GPG key
+      ansible.builtin.rpm_key:
+        key: https://pkg.jenkins.io/redhat/jenkins.io.key
+        state: present
 
     - name: Add Jenkins repository
-      yum_repository:
+      ansible.builtin.yum_repository:
         name: jenkins
         description: Jenkins repository
-        baseurl: http://pkg.jenkins.io/redhat-stable
-        gpgcheck: yes
-        enabled: yes
+        baseurl: https://pkg.jenkins.io/redhat
+        gpgkey: https://pkg.jenkins.io/redhat/jenkins.io.key
+        gpgcheck: no
 
     - name: Install Jenkins
       yum:
