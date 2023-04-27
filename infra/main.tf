@@ -78,8 +78,15 @@ resource "null_resource" "ansible_provisioner" {
       "cat >> /home/ubuntu/.ssh/authorized_keys << EOF",
       "${file("/Users/michelle/downloads/jenkins_nexus.pem")}",
       "EOF",
-      "sudo ansible-playbook -i /Users/michelle/FinTech-sample/infra/jenkins_playbook.yml/inventory.ini /Users/michelle/FinTech-sample/infra/jenkins_playbook.yml/jenkins_playbook.yml",
-      "sudo ansible-playbook -i /Users/michelle/FinTech-sample/infra/jenkins_playbook.yml/inventory.ini /Users/michelle/FinTech-sample/infra/jenkins_playbook.yml/nexus_playbook.yml"
+      "echo '[jenkins]' > ~/inventory.ini",
+      "echo 'jenkins_instance ansible_host=${module.jenkins.public_ip} ansible_user=ec2-user ansible_ssh_private_key_file=/Users/michelle/downloads/jenkins_nexus.pem' >> ~/inventory.ini",
+      #"sudo ansible-playbook -i /Users/michelle/FinTech-sample/infra/jenkins_playbook.yml/inventory.ini /Users/michelle/FinTech-sample/infra/jenkins_playbook.yml/nexus_playbook.yml"
+      "sudo mkdir -p /home/ubuntu/ansible",
+      "sudo chown ubuntu:ubuntu /home/ubuntu/ansible",
+      "sudo chmod 755 /home/ubuntu/ansible",
+      "sudo apt-get install -y rsync",
+      "rsync -avz -e 'ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null' /Users/michelle/FinTech-sample/infra/jenkins_playbook.yml ubuntu@${aws_instance.ansible_control_machine.public_ip}:/home/ubuntu/ansible",
+      "sudo ansible-playbook -i ~/inventory.ini /home/ubuntu/ansible/jenkins_playbook.yml"
     ]
   }
   
