@@ -6,11 +6,13 @@ variable "aws_region" {
 variable "aws_key_pair" {
   description = "The AWS key pair name for the Nexus instance"
   type        = string
+  default = "jenkins_nexus"
 }
 
 variable "subnet_id" {
   description = "The ID of the subnet where the Nexus instance will be launched"
   type        = string
+  default = "subnet-0c33d07bf32823deb"
 }
 
 variable "nexus_ami_id" {

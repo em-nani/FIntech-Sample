@@ -8,10 +8,33 @@
     jenkins_hostname: jenkins.example.com
 
   tasks:
-    - name: Install Jenkins dependencies
+    - name: Fetch remote host key
+      shell: ssh-keyscan -t ecdsa -H {{ inventory_hostname }} >> /home/ubuntu/.ssh/known_hosts
+      register: remote_host_key
+      become: true
+      changed_when: false
+
+    - name: Add remote host key to known hosts
+      lineinfile: 
+        path: /home/ubuntu/.ssh/known_hosts
+        line: "{{ remote_host_key.stdout }}"
+        create: true
+        state: present
+
+    - name: yum update
       yum:
-        name: ['java-1.8.0-openjdk-devel']
+        name: '*'
         state: latest
+    
+    - name: Install Java 11
+      yum:
+        name: java-11-openjdk-devel
+        state: latest
+
+    - name: Set Java 11 as default
+      alternatives:
+        name: java
+        path: /usr/lib/jvm/java-11-openjdk/bin/java
     
     - name: Install required packages
       ansible.builtin.yum:

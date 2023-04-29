@@ -57,6 +57,12 @@ resource "aws_security_group" "ansible_sg" {
 
 #ansible configuration on server
 resource "null_resource" "ansible_provisioner" {
+
+  provisioner "local-exec" {
+    command = "rsync -avz -e 'ssh -i /Users/michelle/downloads/jenkins_nexus.pem' /Users/michelle/FinTech-sample/infra/jenkins_playbook.yml ubuntu@${aws_instance.ansible_control_machine.public_ip}:/home/ubuntu/"
+
+  }
+
   provisioner "remote-exec" {
     connection {
     type     = "ssh"
@@ -65,28 +71,25 @@ resource "null_resource" "ansible_provisioner" {
     host     = "${aws_instance.ansible_control_machine.public_ip}"
     }
     inline = [
-      "echo 'Provisioning with Ansible...'",
-      "sudo apt-get update",
-      "echo deb http://ppa.launchpad.net/ansible/ansible/ubuntu focal main > /etc/apt/sources.list.d/ansible.list",
-      "sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 93C4A3FD7BB9C367",
-      "sudo apt update",
-      "sudo apt install ansible -y",
-      "mkdir -p /home/ubuntu/.ssh",
-      "chmod 700 /home/ubuntu/.ssh",
-      "touch /home/ubuntu/.ssh/authorized_keys",
-      "chmod 600 /home/ubuntu/.ssh/authorized_keys",
-      "cat >> /home/ubuntu/.ssh/authorized_keys << EOF",
-      "${file("/Users/michelle/downloads/jenkins_nexus.pem")}",
-      "EOF",
-      "echo '[jenkins]' > ~/inventory.ini",
-      "echo 'jenkins_instance ansible_host=${module.jenkins.public_ip} ansible_user=ec2-user ansible_ssh_private_key_file=/Users/michelle/downloads/jenkins_nexus.pem' >> ~/inventory.ini",
-      #"sudo ansible-playbook -i /Users/michelle/FinTech-sample/infra/jenkins_playbook.yml/inventory.ini /Users/michelle/FinTech-sample/infra/jenkins_playbook.yml/nexus_playbook.yml"
-      "sudo mkdir -p /home/ubuntu/ansible",
-      "sudo chown ubuntu:ubuntu /home/ubuntu/ansible",
-      "sudo chmod 755 /home/ubuntu/ansible",
-      "sudo apt-get install -y rsync",
-      "rsync -avz -e 'ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null' /Users/michelle/FinTech-sample/infra/jenkins_playbook.yml ubuntu@${aws_instance.ansible_control_machine.public_ip}:/home/ubuntu/ansible",
-      "sudo ansible-playbook -i ~/inventory.ini /home/ubuntu/ansible/jenkins_playbook.yml"
+  "echo 'Provisioning with Ansible...'",
+  "sudo apt-get update",
+  "echo deb http://ppa.launchpad.net/ansible/ansible/ubuntu focal main > /etc/apt/sources.list.d/ansible.list",
+  "sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 93C4A3FD7BB9C367",
+  "sudo apt update",
+  "sudo apt install ansible -y",
+  "mkdir -p /home/ubuntu/.ssh",
+  "chmod 700 /home/ubuntu/.ssh",
+  "touch /home/ubuntu/.ssh/authorized_keys",
+  "chmod 600 /home/ubuntu/.ssh/authorized_keys",
+  "cat >> /home/ubuntu/.ssh/authorized_keys << EOF",
+  "${file("/Users/michelle/downloads/jenkins_nexus.pem")}",
+  "EOF",
+  "echo '[jenkins]' > ~/inventory.ini",
+  "echo 'jenkins_instance ansible_host=${module.jenkins.public_ip} ansible_user=ec2-user ansible_ssh_private_key_file=/home/ubuntu/.ssh/authorized_keys' >> ~/inventory.ini",
+  "ssh-keyscan -t ecdsa ${module.jenkins.public_ip} >> ~/.ssh/known_hosts",
+
+  #"rsync -avzh -e 'ssh -i /home/ubuntu/.ssh/authorized_keys' /Users/michelle/FinTech-sample/infra/jenkins_playbook.yml ubuntu@${aws_instance.ansible_control_machine.public_ip}:/home/ubuntu/ansible/",
+  "sudo ansible-playbook -i ~/inventory.ini /home/ubuntu/jenkins_playbook.yml"
     ]
   }
   
