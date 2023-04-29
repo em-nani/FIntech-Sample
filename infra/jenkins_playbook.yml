@@ -15,7 +15,7 @@
 
     - name: Install OpenJDK 11
       yum:
-        name: java-11-amazon-corretto-devel
+        name: java-11-amazon-corretto.x86_64
         state: present
 
     # - name: Set Java 11 as default
