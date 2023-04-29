@@ -86,7 +86,9 @@ resource "null_resource" "ansible_provisioner" {
   "EOF",
   "echo '[jenkins]' > ~/inventory.ini",
   "echo 'jenkins_instance ansible_host=${module.jenkins.public_ip} ansible_user=ec2-user ansible_ssh_private_key_file=/home/ubuntu/.ssh/authorized_keys' >> ~/inventory.ini",
-  "ssh-keyscan -t ecdsa ${module.jenkins.public_ip} >> ~/.ssh/known_hosts",
+  "echo '[ssh_connection]' > ~/ansible.cfg",
+  "echo 'ssh_args = -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no' >> ~/ansible.cfg",
+
 
   #"rsync -avzh -e 'ssh -i /home/ubuntu/.ssh/authorized_keys' /Users/michelle/FinTech-sample/infra/jenkins_playbook.yml ubuntu@${aws_instance.ansible_control_machine.public_ip}:/home/ubuntu/ansible/",
   "sudo ansible-playbook -i ~/inventory.ini /home/ubuntu/jenkins_playbook.yml"
