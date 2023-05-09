@@ -59,7 +59,7 @@ resource "aws_security_group" "ansible_sg" {
 resource "null_resource" "ansible_provisioner" {
 
   provisioner "local-exec" {
-    command = "rsync -avz -e 'ssh -i /Users/michelle/downloads/jenkins_nexus.pem' /Users/michelle/FinTech-sample/infra/jenkins_playbook.yml ubuntu@${aws_instance.ansible_control_machine.public_ip}:/home/ubuntu/"
+    command = "rsync -avz -e 'ssh -i /Users/m1pro/Downloads//jenkins_nexus.pem' /Users/m1pro/Downloads/Cloud !/FinTech-sample/infra/jenkins_playbook.yml ubuntu@${aws_instance.ansible_control_machine.public_ip}:/home/ubuntu/"
 
   }
 
@@ -82,7 +82,7 @@ resource "null_resource" "ansible_provisioner" {
   "touch /home/ubuntu/.ssh/authorized_keys",
   "chmod 600 /home/ubuntu/.ssh/authorized_keys",
   "cat >> /home/ubuntu/.ssh/authorized_keys << EOF",
-  "${file("/Users/michelle/downloads/jenkins_nexus.pem")}",
+  "${file("/Users/m1pro/Downloads/jenkins_nexus.pem")}",
   "EOF",
   "echo '[jenkins]' > ~/inventory.ini",
   "echo 'jenkins_instance ansible_host=${module.jenkins.public_ip} ansible_user=ec2-user ansible_ssh_private_key_file=/home/ubuntu/.ssh/authorized_keys' >> ~/inventory.ini",
