@@ -59,7 +59,7 @@ resource "aws_security_group" "ansible_sg" {
 resource "null_resource" "ansible_provisioner" {
 
   provisioner "local-exec" {
-    command = "rsync -avz -e 'ssh -i /Users/m1pro/Downloads/jenkins_nexus.pem' /Users/m1pro/Downloads/Cloud !/FinTech-sample/infra/jenkins_playbook.yml ubuntu@${aws_instance.ansible_control_machine.public_ip}:/home/ubuntu/"
+    command = "rsync -avz -e 'ssh -i /Users/m1pro/Downloads/jenkins_nexus.pem' /Users/m1pro/Downloads/Cloud/FinTech-sample/infra/jenkins_playbook.yml ubuntu@${aws_instance.ansible_control_machine.public_ip}:/home/ubuntu/"
 
   }
 
@@ -67,7 +67,7 @@ resource "null_resource" "ansible_provisioner" {
     connection {
     type     = "ssh"
     user     = "ubuntu"
-    private_key = "${file("~/downloads/jenkins_nexus.pem")}"
+    private_key = "${file("~/Downloads/jenkins_nexus.pem")}"
     host     = "${aws_instance.ansible_control_machine.public_ip}"
     }
     inline = [
