@@ -34,3 +34,9 @@ variable "ssh_username" {
   description = "username for ec2"
   type = string
 }
+
+variable "vpc_id" {
+  description = "default vpc id"
+  type = string
+  default = "vpc-029f9a808713e3256"
+}
