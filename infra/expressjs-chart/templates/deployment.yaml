@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "expressjs-chart.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "expressjs-chart.name" . }}
+    helm.sh/chart: {{ include "express-app.chart" . }}
+  annotations:
+    # Add any necessary annotations here
+spec:
+  replicas: {{ .values.replicas.replica_set}}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "expressjs-chart.name" . }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "expressjs-chart.name" . }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .values.image.repository }}:{{ .values.image.tag }}"
+          imagePullPolicy: {{ .values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 3000
+              protocol: TCP
+          # Add any necessary environment variables, volume mounts, etc., here

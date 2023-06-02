@@ -9,11 +9,15 @@ module "jenkins" {
   jenkins_ami_id = var.jenkins_ami_id
 }
 
-module "nexus" {
-  source   = "./modules/nexus"
-  key_name = var.aws_key_pair
-  subnet_id = aws_default_subnet.default.id
-  nexus_ami_id = var.nexus_ami_id
+
+module "eks" {
+  source          = "./modules/eks-cluster"
+  #version         = "17.24.0"
+  #cluster_name    = local.cluster_name
+  #cluster_version = "1.20"
+  #subnets         = module.vpc.private_subnets
+
+  #vpc_id = module.vpc.vpc_id
 }
 
 
@@ -97,4 +101,3 @@ resource "null_resource" "ansible_provisioner" {
   
   depends_on = [aws_instance.ansible_control_machine]
 }
-
