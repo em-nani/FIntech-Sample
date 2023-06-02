@@ -6,7 +6,7 @@ To Run do the following:
 npm install
 npm run 
 
-To activate mocha and chai for testing run 
+#To activate mocha and chai for testing run 
 
 npm install --save-dev mocha chai
 
@@ -22,4 +22,3 @@ Ansible inline
 - sudo apt install ansible
 - chmod 600 jenkins_nexus.pem
 - scp -i /Users/michelle/downloads/jenkins_nexus.pem /Users/michelle/downloads/jenkins_nexus.pem ubuntu@ec2-54-235-9-222.compute-1.amazonaws.com:/tmp/
-
